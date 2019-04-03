@@ -1,0 +1,16 @@
+@charset 'UTF-8';
+$mycolor:#0ff;
+/*공통 부분입니다.*/
+.wrap{
+	background-color:$mycolor;
+}
+/*body부분입니다*/
+body{
+	color:#f00;
+	background-color: #00f;
+	border:1px solid gray;
+	@extend .wrap;
+	.box{
+		display:block;
+	}
+}
