@@ -130,7 +130,7 @@
 									<div class="select-wrap" data-autoset="select">
 										<button type="button" class="selectbox" data-toggle="selectbtn" aria-expanded="false" onchange="myFunction(event)">
 											<span data-select="title">일반암진단비</span>
-											<span data-select="text" data-value="1500">0 만원</span>
+											<span data-select="text" data-value="1200">0 만원</span>
 										</button>
 										<div class="list">
 											<div data-label="일반암진단비" data-autoset="form">
@@ -398,7 +398,7 @@
 				if(selectTextEl) {
 					var idxof = arrUnitWonVal.indexOf(String(selectBtnData));
 					if(idxof !== -1 && self.data('init-unit-select') !== 'loaded') {
-						self.val(idxof);
+						self.val(idxof + 1);
 						MARS.common.formInput()
 					}
 					if(self.val() == 0) {
