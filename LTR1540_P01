@@ -130,7 +130,7 @@
 									<div class="select-wrap" data-autoset="select">
 										<button type="button" class="selectbox" data-toggle="selectbtn" aria-expanded="false" onchange="myFunction(event)">
 											<span data-select="title">일반암진단비</span>
-											<span data-select="text" data-value="1">0 만원</span>
+											<span data-select="text" data-value="1500">0 만원</span>
 										</button>
 										<div class="list">
 											<div data-label="일반암진단비" data-autoset="form">
@@ -355,6 +355,7 @@
 
 		function unitRangeInit() {
 			var arrUnitWonVal = [];
+	
 			$(document).off('click.hasunit').on('click.hasunit', '.form2.has-unit button[data-toggle="closebtn"]', function() {
 				var self = $(this);
 				var formWrap = self.closest('.form2.has-unit');
@@ -382,9 +383,11 @@
 				var self = $(this);
 				var numberWon = 0;
 				var formWrap = self.closest('.form2.has-unit');
+				var selectBtn = formWrap.find('button[data-toggle="selectbtn"]');
+				var selectBtnData = selectBtn && selectBtn.find('span[data-value]') ? selectBtn.find('span[data-value]').data('value') : null;
 				var selectWrap = formWrap.find('.select-wrap');
 				var infoData = formWrap.find('.info2 data');
-				var selectTextEl = selectWrap.find('span[data-select="text"]');
+				var selectTextEl = selectWrap.find('.selectbox span[data-select="text"]');
 				var formList = formWrap.find('.list');
 				var inputRadio = formList.find(':radio[name="selectOpeion"]');
 				if(arrUnitWonVal.length === 0) {
@@ -393,6 +396,11 @@
 					})	
 				} 
 				if(selectTextEl) {
+					var idxof = arrUnitWonVal.indexOf(String(selectBtnData));
+					if(idxof !== -1 && self.data('init-unit-select') !== 'loaded') {
+						self.val(idxof);
+						MARS.common.formInput()
+					}
 					if(self.val() == 0) {
 						inputRadio.prop('checked', false);
 						numberWon = 0
@@ -405,6 +413,10 @@
 						selectTextEl.text(inputRadio.eq(self.val() - 1).next().text().slice(0,-2) + " 만원")
 						infoData.val(numberWon).text(moneyCommaExchange(numberWon));
 					}
+					selectTextEl.attr('data-value', numberWon);
+					if(self.data('init-unit-select') !== 'loaded') {
+						self.data('init-unit-select','loaded');
+					} 
 				}
 			});
 			$('.input-range1 .range.unit input').trigger('change');
