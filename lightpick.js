@@ -2,27 +2,15 @@
        /**
          * 수정파일: lightpick.js  line.425~
          * 주석: 2022-11-25
-         * 설명: 아래 1줄(const getmonth ~) 추가해주고, 
-         *      기존 코드 1줄(day = moment(monthDate).subtract~) 수정했어
+         * 설명: '2022-11-25'로 검색하고, 문장 검색해서 수정해~^^
         */
-
-      renderCalendar = function(el, opts) {
+        
+        renderCalendar = function(el, opts) {
             var html = '',
             monthDate = moment(opts.calendar[0]);
-            //2022-11-25 추가(1)
-            const getMonth = new Date().getMonth();
-
+    
             for (var i = 0; i < opts.numberOfMonths; i++) {
                 var day = moment(monthDate);
-                //2022-11-25 수정(1)
-                //day = moment(monthDate).subtract(11, 'month');
-                day = moment(monthDate).subtract(getMonth, 'month');
-                
-                // if(opts.period) {
-                //     day = moment(monthDate).subtract(11, 'month');
-                //     renderMonthsList(day, opts);
-                //     renderYearsList(day, opts);
-                // }
         
                 html += '<section class="lightpick__month">';
                 html += '<div class="lightpick__month-title-bar">';
@@ -96,4 +84,74 @@
             opts.calendar[1] = moment(monthDate);
     
             el.querySelector('.lightpick__months').innerHTML = html;
+            //2022-11-25 추가(9줄)
+            setTimeout(() => {
+                if(!window.openShowInit) return;
+                const element = $(el).find('.is-start-date').closest('.lightpick__month');
+                if(element && element.length) {
+                   const top = $(el).scrollTop() + element.position().top
+                   $(el).scrollTop(top);
+                   window.openShowInit = false;
+                }
+            }, 200);
         },
+        updateDates = function(el, opts) {
+            var days = el.querySelectorAll('.lightpick__day');
+            [].forEach.call(days, function(day) {
+            day.outerHTML = renderDay(
+                opts,
+                parseInt(day.getAttribute('data-time')),
+                false,
+                day.className.split(' ')
+            );
+            });
+    
+            checkDisabledDatesInRange(el, opts);
+        },
+        /* 02 */
+            gotoDate: function(date) {
+                var date = moment(date, this._opts.format);
+                //2022-11-25 수정 및 추가(5줄)
+                if (this.getDate() && this.getDate()._i) {
+                    date = moment(moment(this.getDate()._i).get('year') + '.01.01');
+                } else {
+                    date = moment(moment().get('year') + '.01.01');
+                }
+                
+                date.set('date', 1);
+        
+                this._opts.calendar = [moment(date)];
+        
+                renderCalendar(this.el, this._opts);
+            },
+            /* 03 */
+            show: function(target) {
+                //2022-11-25 추가(1줄)
+                window.openShowInit = true;
+                document.body.append(this.el);
+                if (!this.isShowing) {
+                    this.isShowing = true;
+
+                    if (this._opts.repick) {
+                        this._opts.repickTrigger = target;
+                    }
+
+                    this.syncFields();
+
+                    this.gotoDate(this._opts.endDate);
+
+                    this.el.classList.remove('is-hidden');
+
+                    var top = this.el.offsetTop + this.el.children[0].offsetHeight;
+
+                    if (typeof this._opts.onOpen === 'function') {
+                        this._opts.onOpen.call(this);
+                    }
+
+                    if (typeof this._opts.period === 'function') {
+                        this.el.scrollTo({top: top});
+                    }else{
+                        this.gotoDate(this._opts.startDate);
+                    }
+                }
+            },
